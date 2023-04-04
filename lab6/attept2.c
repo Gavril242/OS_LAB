@@ -92,12 +92,36 @@ void print_regular_file_info(const char* filepath) {
             }
             break;
         }
-        case 'a':
-            printf("Access rights: TODO\n");
-            break;
-        case 'I':
-            printf("Create symbolic link: TODO\n");
-            break;
+        case 'a':struct stat statbuf;
+                     if (stat(filepath, &statbuf) == 0) {
+                         printf("Access rights: ");
+                         printf((S_ISDIR(statbuf.st_mode)) ? "d" : "-");
+                         printf((statbuf.st_mode & S_IRUSR) ? "r" : "-");
+                         printf((statbuf.st_mode & S_IWUSR) ? "w" : "-");
+                         printf((statbuf.st_mode & S_IXUSR) ? "x" : "-");
+                         printf((statbuf.st_mode & S_IRGRP) ? "r" : "-");
+                         printf((statbuf.st_mode & S_IWGRP) ? "w" : "-");
+                         printf((statbuf.st_mode & S_IXGRP) ? "x" : "-");
+                         printf((statbuf.st_mode & S_IROTH) ? "r" : "-");
+                         printf((statbuf.st_mode & S_IWOTH) ? "w" : "-");
+                         printf((statbuf.st_mode & S_IXOTH) ? "x" : "-");
+                         printf("\n");
+                     } else {
+                         printf("Error: could not access file %s\n", filepath);
+                     }
+                     break;
+        case 'I':case 'I': {
+                     char link_path[100];
+                     printf("Enter path for symbolic link: ");
+                     scanf("%s", link_path);
+                     if (symlink(filepath, link_path) == 0) {
+                         printf("Symbolic link created successfully at %s\n", link_path);
+                     } else {
+                         printf("Error creating symbolic link\n");
+                     }
+                     break;
+                 }
+
         default:
             printf("Invalid option\n");
             break;
@@ -153,9 +177,24 @@ void print_symbolic_link_info(const char* filepath) {
             }
             break;
         }
-        case 'a':
-            printf("Access rights: TODO\n");
-            break;
+        case 'a':struct stat statbuf;
+                     if (stat(filepath, &statbuf) == 0) {
+                         printf("Access rights: ");
+                         printf((S_ISDIR(statbuf.st_mode)) ? "d" : "-");
+                         printf((statbuf.st_mode & S_IRUSR) ? "r" : "-");
+                         printf((statbuf.st_mode & S_IWUSR) ? "w" : "-");
+                         printf((statbuf.st_mode & S_IXUSR) ? "x" : "-");
+                         printf((statbuf.st_mode & S_IRGRP) ? "r" : "-");
+                         printf((statbuf.st_mode & S_IWGRP) ? "w" : "-");
+                         printf((statbuf.st_mode & S_IXGRP) ? "x" : "-");
+                         printf((statbuf.st_mode & S_IROTH) ? "r" : "-");
+                         printf((statbuf.st_mode & S_IWOTH) ? "w" : "-");
+                         printf((statbuf.st_mode & S_IXOTH) ? "x" : "-");
+                         printf("\n");
+                     } else {
+                         printf("Error: could not access file %s\n", filepath);
+                     }
+                     break;
         default:
             printf("Invalid option\n");
             break;
