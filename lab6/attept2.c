@@ -4,10 +4,12 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <string.h>
 
 // function declarations
 void print_regular_file_info(const char* filepath);
 void print_symbolic_link_info(const char* filepath);
+void print_directory_info(const char* dirpath);
 
 int main(int argc, char** argv) {
     // check for correct usage
@@ -16,7 +18,7 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
-    // iterate through all files in the arguments
+    // iterate through all files/directories in the arguments
     for (int i = 1; i < argc; i++) {
         struct stat statbuf;
         if (lstat(argv[i], &statbuf) == -1) {
@@ -24,7 +26,7 @@ int main(int argc, char** argv) {
             continue;
         }
 
-        // print file info based on file type
+        // print file/directory info based on type
         if (S_ISREG(statbuf.st_mode)) {
             printf("Regular file: %s\n", argv[i]);
             print_regular_file_info(argv[i]);
@@ -35,7 +37,7 @@ int main(int argc, char** argv) {
         }
         else if (S_ISDIR(statbuf.st_mode)) {
             printf("Directory: %s\n", argv[i]);
-            // add options for directory
+            print_directory_info(argv[i]);
         }
         else {
             printf("Unknown file type: %s\n", argv[i]);
@@ -44,7 +46,6 @@ int main(int argc, char** argv) {
 
     return 0;
 }
-
 void print_regular_file_info(const char* filepath) {
     // print regular file info
     printf("Options:\n");
@@ -110,7 +111,7 @@ void print_regular_file_info(const char* filepath) {
                          printf("Error: could not access file %s\n", filepath);
                      }
                      break;
-        case 'I':case 'I': {
+                     case 'I': {
                      char link_path[100];
                      printf("Enter path for symbolic link: ");
                      scanf("%s", link_path);
@@ -199,4 +200,86 @@ void print_symbolic_link_info(const char* filepath) {
             printf("Invalid option\n");
             break;
     }
+}
+
+
+void print_directory_info(const char* dirpath) {
+    // print directory info
+    printf("Options:\n");
+    printf("-n: name\n");
+    printf("-d: size\n");
+    printf("-a: access rights\n");
+    printf("-c: total number of files with .c extension\n");
+    printf("-q: quit\n");
+
+    char input;
+    do {
+        // get user input for options
+        printf("\nEnter option: ");
+        scanf(" %c", &input);
+
+        // process option
+        switch (input) {
+            case 'n':
+                printf("\nName: %s\n", dirpath);
+                break;
+            case 'd': {
+                struct stat statbuf;
+                if (stat(dirpath, &statbuf) == 0) {
+                    printf("\nSize: %ld bytes\n", statbuf.st_size);
+                } else {
+                    printf("\nError: could not access directory %s\n", dirpath);
+                }
+                break;
+            }
+            case 'a': {
+                struct stat statbuf;
+                if (stat(dirpath, &statbuf) == 0) {
+                    printf("\nAccess rights: ");
+                    printf((S_ISDIR(statbuf.st_mode)) ? "d" : "-");
+                    printf((statbuf.st_mode & S_IRUSR) ? "r" : "-");
+                    printf((statbuf.st_mode & S_IWUSR) ? "w" : "-");
+                    printf((statbuf.st_mode & S_IXUSR) ? "x" : "-");
+                    printf((statbuf.st_mode & S_IRGRP) ? "r" : "-");
+                    printf((statbuf.st_mode & S_IWGRP) ? "w" : "-");
+                    printf((statbuf.st_mode & S_IXGRP) ? "x" : "-");
+                    printf((statbuf.st_mode & S_IROTH) ? "r" : "-");
+                    printf((statbuf.st_mode & S_IWOTH) ? "w" : "-");
+                    printf((statbuf.st_mode & S_IXOTH) ? "x" : "-");
+                    printf("\n");
+                } else {
+                    printf("\nError: could not access directory %s\n", dirpath);
+                }
+                break;
+            }
+            case 'c': {
+                DIR* dir = opendir(dirpath);
+                if (dir == NULL) {
+                    printf("\nError: could not open directory %s\n", dirpath);
+                    break;
+                }
+
+                int total_c_files = 0;
+                struct dirent* entry;
+                while ((entry = readdir(dir)) != NULL) {
+                    // check if file has .c extension
+                    char* ext = strrchr(entry->d_name, '.');
+                    if (ext != NULL && strcmp(ext, ".c") == 0) {
+                        total_c_files++;
+                    }
+                }
+
+                closedir(dir);
+
+                printf("\nTotal number of files with .c extension: %d\n", total_c_files);
+                break;
+            }
+            case 'q':
+                printf("\nExiting...\n");
+                break;
+            default:
+                printf("\nInvalid option\n");
+                break;
+        }
+    } while (input != 'q');
 }
