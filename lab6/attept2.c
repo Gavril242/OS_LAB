@@ -11,6 +11,64 @@ void print_regular_file_info(const char* filepath);
 void print_symbolic_link_info(const char* filepath);
 void print_directory_info(const char* dirpath);
 
+int main(int argc, char* argv[]) {
+    pid_t pid;
+    int i;
+
+    for(i = 1; i < argc; i++) {
+        pid = fork();
+        struct stat statbuf;
+
+        if(pid < 0) {
+            printf("Error: Fork failed.\n");
+            exit(1);
+        }
+        else if(pid == 0) { // Child process
+         printf("child process here\n");
+            // Handle file options based on file type
+            if (S_ISREG(statbuf.st_mode)) {
+                       printf("Regular file: %s\n", argv[i]);
+                       print_regular_file_info(argv[i]);
+                   }
+                   else if (S_ISLNK(statbuf.st_mode)) {
+                       printf("Symbolic link: %s\n", argv[i]);
+                       print_symbolic_link_info(argv[i]);
+                   }
+                   else if (S_ISDIR(statbuf.st_mode)) {
+                       printf("Directory: %s\n", argv[i]);
+                       print_directory_info(argv[i]);
+                   }
+
+            // If the file is a regular .c file, create a second child process to execute a script
+            if(strcmp(argv[i] + strlen(argv[i]) - 2, ".c") == 0) {
+                pid_t script_pid = fork();
+
+                if(script_pid < 0) {
+                    printf("Error: Fork failed.\n");
+                    exit(1);
+                }
+                else if(script_pid == 0) { // Second child process
+                    // Execute script
+                    printf("Hello we foung a .c file");
+                   // system("path/to/script.sh");
+                    //exit(0);
+                }
+            }
+
+            exit(0);
+        }
+        else { // Parent process
+        printf("Parent process here\n");
+            // Do nothing
+        }
+    }
+
+    // Wait for all child processes to complete
+    while(wait(NULL) > 0);
+
+    return 0;
+}
+/*
 int main(int argc, char** argv) {
     // check for correct usage
     if (argc < 2) {
@@ -45,7 +103,7 @@ int main(int argc, char** argv) {
     }
 
     return 0;
-}
+}*/
 void print_regular_file_info(const char* filepath) {
     // print regular file info
     printf("Options:\n");
