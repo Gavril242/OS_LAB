@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <dirent.h>
 #include <string.h>
 
@@ -18,6 +19,10 @@ int main(int argc, char* argv[]) {
     for(i = 1; i < argc; i++) {
         pid = fork();
         struct stat statbuf;
+         if (lstat(argv[i], &statbuf) == -1) {
+                    printf("Error: could not access file %s\n", argv[i]);
+                    continue;
+                }
 
         if(pid < 0) {
             printf("Error: Fork failed.\n");
@@ -29,6 +34,23 @@ int main(int argc, char* argv[]) {
             if (S_ISREG(statbuf.st_mode)) {
                        printf("Regular file: %s\n", argv[i]);
                        print_regular_file_info(argv[i]);
+                       if(strcmp(argv[i] + strlen(argv[i]) - 2, ".c") == 0) {
+                                       pid_t script_pid = fork();
+
+                                       if(script_pid < 0) {
+                                           printf("Error: Fork failed.\n");
+                                           exit(1);
+                                       }
+                                       else if(script_pid == 0) { // Second child process
+                                           // Execute script
+                                            printf("Hello we foung a .c file");
+                                            execl("/bin/bash", "bash","script.sh", argv[i],NULL);
+                                           // system("path/to/script.sh");
+                                            exit(0);
+                                       }
+                                       wait(NULL);
+
+                                   }
                    }
                    else if (S_ISLNK(statbuf.st_mode)) {
                        printf("Symbolic link: %s\n", argv[i]);
@@ -38,22 +60,6 @@ int main(int argc, char* argv[]) {
                        printf("Directory: %s\n", argv[i]);
                        print_directory_info(argv[i]);
                    }
-
-            // If the file is a regular .c file, create a second child process to execute a script
-            if(strcmp(argv[i] + strlen(argv[i]) - 2, ".c") == 0) {
-                pid_t script_pid = fork();
-
-                if(script_pid < 0) {
-                    printf("Error: Fork failed.\n");
-                    exit(1);
-                }
-                else if(script_pid == 0) { // Second child process
-                    // Execute script
-                    printf("Hello we foung a .c file");
-                   // system("path/to/script.sh");
-                    //exit(0);
-                }
-            }
 
             exit(0);
         }

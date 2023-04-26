@@ -1,14 +1,38 @@
 #!/bin/bash
 
-# create 5 random text files
-for i in {1..5}; do
-    filename="file$i.txt"
-    size=$((RANDOM % 1000 + 1)) # random size between 1 and 1000 bytes
-    dd if=/dev/urandom of=$filename bs=$size count=1 > /dev/null 2>&1 # generate random text
-done
+# check if an argument was provided
+if [ -z "$1" ]
+then
+  echo "Please provide the name of a .c file as an argument."
+  exit 1
+fi
 
-# create 2 symbolic links to random files
-ln -s $(ls | shuf -n 1) link1.txt
-ln -s $(ls | shuf -n 1) link2.txt
+# extract the filename without extension
+filename=$(basename -- "$1")
+extension="${filename##*.}"
+filename="${filename%.*}"
 
-echo "Files and symbolic links created successfully!"
+# compile the .c file and capture the output
+output=$(gcc -Wall -Wextra "$1" 2>&1)
+
+# check if the compilation was successful
+if [ $? -eq 0 ]
+then
+  echo "Compilation successful."
+else
+  echo "Compilation failed with errors:"
+  echo "$output"
+fi
+
+# check for warnings in the output
+if echo "$output" | grep -iq 'warning'
+then
+  echo "Warnings:"
+  echo "$output" | grep -i 'warning'
+fi
+errors=$(echo "$output" | grep -c 'error')
+warnings=$(echo "$output" | grep -c 'warning')
+
+# print the total number of errors and warnings
+echo "Total errors: $errors"
+echo "Total warnings: $warnings"
