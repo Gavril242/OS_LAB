@@ -31,17 +31,14 @@ void print_type(struct stat buf){
     //check POSIX flags
     if(S_ISREG(buf.st_mode)){
         printf("TYPE OF ARGUMENT - REGULAR\n");
-        return;
     }
 
     else if(S_ISDIR(buf.st_mode)){
         printf("TYPE OF ARGUMENT - DIRECTORY\n");
-        return;
     }
 
     else if(S_ISLNK((buf.st_mode))){
         printf("TYPE OF ARGUMENT - SYMBOLIC LINK\n");
-        return;
     }
 }
 
@@ -77,8 +74,6 @@ void wait_for_children(){
         else{
             printf("Child process with pid %d has terminated abnormally with code %d.\n\n", awaited_child, WEXITSTATUS(status));
         }
-
-        //awaited_child = wait(&status);
     }
 }
 
