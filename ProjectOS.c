@@ -11,6 +11,12 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
+
+void optionsForDirectories(char* path, struct stat buf, char* options);
+void optionsForRegularFiles(char* path, struct stat buf, char* options);
+void input_options(char* path, struct stat buf);
+void optionsForLink(char* path, struct stat buf, char* options);
+
 void get_filename(char path[1024], char filename[1024]){
     int len = strlen(path);
     int count = 0, j = len;
@@ -43,8 +49,8 @@ void print_type(struct stat buf){
 }
 
 
-//function that prints the menu, based on the type of the file
-void menu(struct stat buf){
+//printing the menu options
+void printMenu(struct stat buf){
     printf("Options menu: \n");
 
     if(S_ISREG(buf.st_mode)){
@@ -332,68 +338,90 @@ void change_link_permissions(char* path, struct stat buf){
     }
 }
 
-void input_options(char* path, struct stat buf);
 
-void optionsForRegularFiles(char* path, struct stat buf, char* options){
-    int l, i;
-    l = strlen(options);
 
-    char filename[1024];
 
-    for(i=1;i<l;i++){
-        if(!strchr("ndhmal", options[i])){
-            printf("Wrong input. Please enter your options again:\n");
-            menu(buf);
-            input_options(path, buf);
-            return;
-        }
+int main(int argc, char* argv[]){
+
+    if(argc == 1){
+        printf("Please add arguments, you can put regular files, links and directories\n");
+        exit(-1);
     }
 
-    for(i=1;i<l;i++){
-        if(options[i]=='n'){
+    for(int i=1;i<argc;i++){
+
+        pid_t pid = fork();
+        if(pid < 0){
+            perror(strerror(errno));
+            exit(errno);
+        }
+        //child process
+        else if (pid == 0){
+            //get path of arguments
+            char path[1024];
+            strcpy(path, argv[i]);
+
+
+            //get filename
+            char filename[1024];
             get_filename(path, filename);
-            printf("The name is %s\n", filename);
-        }
+            printf("%s: ", filename);
 
-        if(options[i]=='d'){
-            long size;
-            size = buf.st_size;
-            printf("The size is %ld bytes\n", size);
-        }
 
-        if(options[i]=='h'){
-            int count;
-            count = buf.st_nlink;
-            printf("The number of hard links is %d\n", count);
-        }
-
-        if(options[i]=='m'){
-            struct timespec ts;
-            timespec_get(&ts, buf.st_mtime);
-            printf("The last modification time is %ld.%.9ld\n", ts.tv_sec, ts.tv_nsec);
-        }
-
-        if(options[i]=='a'){
-            print_access_rights(buf);
-        }
-
-        if(options[i]=='l'){
-            char link_name[1024];
-
-            printf("Input name of link: ");
-            scanf("%s", link_name);
-
+            //use lstat on file and print file type
             int check;
-            check = symlink(path, link_name);
+            struct stat buf;
+
+            check = lstat(path, &buf);
             if(check == -1){
                 perror(strerror(errno));
                 exit(errno);
             }
-            printf("Link has been created!\n");
+            print_type(buf);
+
+            printMenu(buf);
+            //input of the desired options
+            input_options(path, buf);
+            exit(EXIT_SUCCESS);
+
+        }
+
+        //parent process
+        else if (pid > 0){
+            char path[1024];
+            strcpy(path, argv[i]);
+
+
+            //get filename
+            char filename[1024];
+            get_filename(path, filename);
+
+            //use lstat on file and print file type
+            int check;
+            struct stat buf;
+
+            check = lstat(path, &buf);
+            if(check == -1){
+                perror(strerror(errno));
+                exit(errno);
+            }
+
+            if(S_ISREG(buf.st_mode)){
+                c_extension_work(path, buf);
+            }
+
+            else if(S_ISDIR(buf.st_mode)){
+                create_new_file(path, buf);
+            }
+
+            else if(S_ISLNK(buf.st_mode)){
+                change_link_permissions(path, buf);
+            }
+            wait_for_children();
         }
     }
 
-    //c_extension_work(path, buf);
+    return 0;
 }
 
 void optionsForDirectories(char* path, struct stat buf, char* options){
@@ -403,7 +431,7 @@ void optionsForDirectories(char* path, struct stat buf, char* options){
     for(i=1;i<l;i++){
         if(!strchr("ndac", options[i])){
             printf("Wrong input. Please enter your options again:\n");
-            menu(buf);
+            printMenu(buf);
             input_options(path, buf);
             return;
         }
@@ -478,7 +506,7 @@ void optionsForLink(char* path, struct stat buf, char* options){
     for(i=1;i<l;i++){
         if(!strchr("nldta", options[i])){
             printf("Wrong input. Please enter your options again:\n");
-            menu(buf);
+            printMenu(buf);
             input_options(path, buf);
             return;
         }
@@ -531,7 +559,6 @@ void optionsForLink(char* path, struct stat buf, char* options){
         }
     }
 
-    //change_link_permissions(path, buf);
 }
 
 void input_options(char* path, struct stat buf){
@@ -543,7 +570,7 @@ void input_options(char* path, struct stat buf){
 
     if(options[0]!='-'){
         printf("Wrong input. Please enter your options again:\n");
-        menu(buf);
+        printMenu(buf);
         input_options(path, buf);
         return;
     }
@@ -565,86 +592,62 @@ void input_options(char* path, struct stat buf){
 
 }
 
-int main(int argc, char* argv[]){
+void optionsForRegularFiles(char* path, struct stat buf, char* options){
+    int l, i;
+    l = strlen(options);
 
-    if(argc == 1){
-        printf("Please add arguments, you can put regular files, links and directories\n");
-        exit(-1);
-    }
+    char filename[1024];
 
-    for(int i=1;i<argc;i++){
-
-        pid_t pid = fork();
-        if(pid < 0){
-            perror(strerror(errno));
-            exit(errno);
-        }
-        //child process
-        else if (pid == 0){
-            //get path of arguments
-            char path[1024];
-            strcpy(path, argv[i]);
-
-
-            //get filename
-            char filename[1024];
-            get_filename(path, filename);
-            printf("%s: ", filename);
-
-
-            //use lstat on file and print file type
-            int check;
-            struct stat buf;
-
-            check = lstat(path, &buf);
-            if(check == -1){
-                perror(strerror(errno));
-                exit(errno);
-            }
-            print_type(buf);
-
-            //print Menu for file type
-            menu(buf);
-            //input of the desired options
+    for(i=1;i<l;i++){
+        if(!strchr("ndhmal", options[i])){
+            printf("Wrong input. Please enter your options again:\n");
+            printMenu(buf);
             input_options(path, buf);
-            exit(EXIT_SUCCESS);
+            return;
+        }
+    }
 
+    for(i=1;i<l;i++){
+        if(options[i]=='n'){
+            get_filename(path, filename);
+            printf("The name is %s\n", filename);
         }
 
-        //parent process
-        else if (pid > 0){
-            char path[1024];
-            strcpy(path, argv[i]);
+        if(options[i]=='d'){
+            long size;
+            size = buf.st_size;
+            printf("The size is %ld bytes\n", size);
+        }
 
+        if(options[i]=='h'){
+            int count;
+            count = buf.st_nlink;
+            printf("The number of hard links is %d\n", count);
+        }
 
-            //get filename
-            char filename[1024];
-            get_filename(path, filename);
+        if(options[i]=='m'){
+            struct timespec ts;
+            timespec_get(&ts, buf.st_mtime);
+            printf("The last modification time is %ld.%.9ld\n", ts.tv_sec, ts.tv_nsec);
+        }
 
-            //use lstat on file and print file type
+        if(options[i]=='a'){
+            print_access_rights(buf);
+        }
+
+        if(options[i]=='l'){
+            char link_name[1024];
+
+            printf("Input name of link: ");
+            scanf("%s", link_name);
+
             int check;
-            struct stat buf;
-
-            check = lstat(path, &buf);
+            check = symlink(path, link_name);
             if(check == -1){
                 perror(strerror(errno));
                 exit(errno);
             }
-
-            if(S_ISREG(buf.st_mode)){
-                c_extension_work(path, buf);
-            }
-
-            else if(S_ISDIR(buf.st_mode)){
-                create_new_file(path, buf);
-            }
-
-            else if(S_ISLNK(buf.st_mode)){
-                change_link_permissions(path, buf);
-            }
-            wait_for_children();
+            printf("Link has been created!\n");
         }
     }
-
-    return 0;
 }

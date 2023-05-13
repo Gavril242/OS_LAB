@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0e5c8ef7-75e1-4076-91bb-d6c90dd3dd55" name="Changes" comment="2.0 - Uploading version Cleanup and setting up the grade feature and adding new acces rights for the menu, minor bugs found such as paralellism messing the printing order otherwise all good :D">
+    <list default="true" id="0e5c8ef7-75e1-4076-91bb-d6c90dd3dd55" name="Changes" comment="2.1 - Uploading version Cleanup and setting up the grade feature and adding new acces rights for the menu, minor bugs found such as paralellism messing the printing order otherwise all good :D">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Project.exe" beforeDir="false" afterPath="$PROJECT_DIR$/Project.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProjectOS.c" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectOS.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/grades.txt" beforeDir="false" afterPath="$PROJECT_DIR$/grades.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,7 +89,14 @@
       <option name="project" value="LOCAL" />
       <updated>1683977218983</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="2.1 - Uploading version Cleanup and setting up the grade feature and adding new acces rights for the menu, minor bugs found such as paralellism messing the printing order otherwise all good :D">
+      <created>1683977352148</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1683977352148</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -112,6 +117,7 @@
     <MESSAGE value="os lab idk it work dont brake it" />
     <MESSAGE value="Cleanup and setting up the grade feature and adding new acces rights for the menu" />
     <MESSAGE value="2.0 - Uploading version Cleanup and setting up the grade feature and adding new acces rights for the menu, minor bugs found such as paralellism messing the printing order otherwise all good :D" />
-    <option name="LAST_COMMIT_MESSAGE" value="2.0 - Uploading version Cleanup and setting up the grade feature and adding new acces rights for the menu, minor bugs found such as paralellism messing the printing order otherwise all good :D" />
+    <MESSAGE value="2.1 - Uploading version Cleanup and setting up the grade feature and adding new acces rights for the menu, minor bugs found such as paralellism messing the printing order otherwise all good :D" />
+    <option name="LAST_COMMIT_MESSAGE" value="2.1 - Uploading version Cleanup and setting up the grade feature and adding new acces rights for the menu, minor bugs found such as paralellism messing the printing order otherwise all good :D" />
   </component>
 </project>
