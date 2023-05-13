@@ -30,17 +30,17 @@ void print_type(struct stat buf){
 
     //check POSIX flags
     if(S_ISREG(buf.st_mode)){
-        printf("REGULAR\n");
+        printf("TYPE OF ARGUMENT - REGULAR\n");
         return;
     }
 
     else if(S_ISDIR(buf.st_mode)){
-        printf("DIRECTORY\n");
+        printf("TYPE OF ARGUMENT - DIRECTORY\n");
         return;
     }
 
     else if(S_ISLNK((buf.st_mode))){
-        printf("SYMBOLIC LINK\n");
+        printf("TYPE OF ARGUMENT - SYMBOLIC LINK\n");
         return;
     }
 }
@@ -48,21 +48,18 @@ void print_type(struct stat buf){
 
 //function that prints the menu, based on the type of the file
 void menu(struct stat buf){
-    printf("---- MENU ----\n");
+    printf("Options menu: \n");
 
     if(S_ISREG(buf.st_mode)){
-        printf("\u2022 n: name\n\u2022 d: size\n\u2022 h: hard link count\n\u2022 m: time of last modification\n\u2022 a: access rights\n\u2022 l: create symbolic link\n");
-        return;
+        printf(" -n: name\n -d: size\n -h: hard link count\n -m: time of last modification\n -a: access rights\n -l: create symbolic link\n");
     }
 
     if(S_ISDIR(buf.st_mode)){
-        printf("\u2022 n: name\n\u2022 d: size\n\u2022 a: access rights\n\u2022 c: total number of files with .c extension\n");
-        return;
+        printf(" -n: name\n -d: size\n -a: access rights\n -c: total number of files with .c extension\n");
     }
 
     if(S_ISLNK(buf.st_mode)){
-        printf("\u2022 n: name\n\u2022 l: delete symbolic link\n\u2022 d: size of symbolic link\n\u2022 t: size of target file\n\u2022 a: access rights\n");
-        return;
+        printf(" -n: name\n -l: delete symbolic link\n -d: size of symbolic link\n -t: size of target file\n -a: access rights\n");
     }
 }
 
@@ -188,9 +185,10 @@ void c_extension_work(char* path, struct stat buf){
 
         else{
 
-            printf("The number of lines in this file is:\n");
             int check;
+            printf("The number of lines in this file is: \n");
             check = execlp("wc", "wc", "-l", path, NULL);
+
 
             if(check == -1){
                 perror(strerror(errno));
@@ -207,12 +205,9 @@ void c_extension_work(char* path, struct stat buf){
         wait_for_children();
         if(filename[strlen(filename)-1]=='c' && filename[strlen(filename)-2]=='.'){
             int errors = 0, warnings = 0, score=0;
-            //FILE* stream;
+
 
             close(pfd[1]);
-
-            /*stream = fdopen(pfd[0],"r");
-            fscanf(stream, "%d %d", &errors, &warnings);*/
 
             char s_buff[5];
             int check;
@@ -302,8 +297,6 @@ void create_new_file(char* path, struct stat buf){
         strcat(new_path, "/");
         strcat(new_path, new_filename);
 
-        /*int check;
-        check = creat(new_path, S_IRUSR);*/
 
         int check;
         check = execlp("touch", "touch", new_path, NULL);
@@ -312,9 +305,6 @@ void create_new_file(char* path, struct stat buf){
             exit(errno);
         }
 
-        //close(check);
-
-        //exit(EXIT_SUCCESS);
     }
 
     else if(pid2>0){
@@ -340,10 +330,6 @@ void change_link_permissions(char* path, struct stat buf){
             exit(errno);
         }
 
-        /*printf("The new acces rights are:\n");
-        print_access_rights(buf);
-
-        exit(EXIT_SUCCESS);*/
     }
 
     else if(pid2>0){
@@ -353,7 +339,7 @@ void change_link_permissions(char* path, struct stat buf){
 
 void input_options(char* path, struct stat buf);
 
-void options_REG(char* path, struct stat buf, char* options){
+void optionsForRegularFiles(char* path, struct stat buf, char* options){
     int l, i;
     l = strlen(options);
 
@@ -415,7 +401,7 @@ void options_REG(char* path, struct stat buf, char* options){
     //c_extension_work(path, buf);
 }
 
-void options_DIR(char* path, struct stat buf, char* options){
+void optionsForDirectories(char* path, struct stat buf, char* options){
     int l, i;
     l = strlen(options);
 
@@ -466,10 +452,11 @@ void options_DIR(char* path, struct stat buf, char* options){
                 entry = readdir(dir);
                 while(entry!=NULL){
 
-                    //printf("%s %c %c\n", entry->d_name, entry->d_name[strlen(entry->d_name)-1], entry->d_name[strlen(entry->d_name)-1]);
+                    //counting the .c files within the directory
                     if(entry->d_name[strlen(entry->d_name)-1]=='c' && entry->d_name[strlen(entry->d_name)-2]=='.'){
                         counter++;
                     }
+
 
                     entry = readdir(dir);
                 }
@@ -486,12 +473,10 @@ void options_DIR(char* path, struct stat buf, char* options){
             }
         }
     }
-
-    //create_new_file(path, buf);
 }
 
 
-void options_LNK(char* path, struct stat buf, char* options){
+void optionsForLink(char* path, struct stat buf, char* options){
     int i, l;
     l = strlen(options);
 
@@ -556,7 +541,7 @@ void options_LNK(char* path, struct stat buf, char* options){
 
 void input_options(char* path, struct stat buf){
 
-    printf("Please enter your options!\n");
+    printf("Please enter your options:\n");
 
     char options[10];
     scanf("%s", options);
@@ -569,17 +554,17 @@ void input_options(char* path, struct stat buf){
     }
 
     if(S_ISREG(buf.st_mode)){
-        options_REG(path, buf, options);
+        optionsForRegularFiles(path, buf, options);
         return;
     }
 
     else if(S_ISDIR(buf.st_mode)){
-        options_DIR(path, buf, options);
+        optionsForDirectories(path, buf, options);
         return;
     }
 
     else if(S_ISLNK(buf.st_mode)){
-        options_LNK(path, buf, options);
+        optionsForLink(path, buf, options);
         return;
     }
 
@@ -588,19 +573,17 @@ void input_options(char* path, struct stat buf){
 int main(int argc, char* argv[]){
 
     if(argc == 1){
-        printf("Not enough arguments\n");
+        printf("Please add arguments, you can put regular files, links and directories\n");
         exit(-1);
     }
 
     for(int i=1;i<argc;i++){
 
-        //start a child process for each argument
         pid_t pid = fork();
         if(pid < 0){
             perror(strerror(errno));
             exit(errno);
         }
-
         //child process
         else if (pid == 0){
             //get path of arguments
@@ -611,7 +594,8 @@ int main(int argc, char* argv[]){
             //get filename
             char filename[1024];
             get_filename(path, filename);
-            printf("%s - ", filename);
+            printf("%s: ", filename);
+
 
             //use lstat on file and print file type
             int check;
@@ -626,11 +610,10 @@ int main(int argc, char* argv[]){
 
             //print Menu for file type
             menu(buf);
-
             //input of the desired options
             input_options(path, buf);
-
             exit(EXIT_SUCCESS);
+
         }
 
         //parent process
@@ -664,8 +647,7 @@ int main(int argc, char* argv[]){
             else if(S_ISLNK(buf.st_mode)){
                 change_link_permissions(path, buf);
             }
-
-            //wait_for_children();
+            wait_for_children();
         }
     }
 

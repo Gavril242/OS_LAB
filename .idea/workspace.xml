@@ -4,16 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0e5c8ef7-75e1-4076-91bb-d6c90dd3dd55" name="Changes" comment="os lab idk it work dont brake it">
+    <list default="true" id="0e5c8ef7-75e1-4076-91bb-d6c90dd3dd55" name="Changes" comment="Cleanup and setting up the grade feature and adding new acces rights for the menu">
+      <change afterPath="$PROJECT_DIR$/errs_and_warnings.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Example.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/a.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab6/a.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab6/attept2.c" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectOS.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab6/badcprogram.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab6/p1.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab6/script.sh" beforeDir="false" afterPath="$PROJECT_DIR$/script.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab7/example.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project.exe" beforeDir="false" afterPath="$PROJECT_DIR$/Project.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectOS.c" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectOS.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/grades.txt" beforeDir="false" afterPath="$PROJECT_DIR$/grades.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/script.sh" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,21 +34,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "C:/Users/donet/Desktop/OS_LAB",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\donet\Desktop\OS_LAB" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\donet\Desktop\OS_LAB" />
     </key>
@@ -78,7 +79,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681852549358</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Cleanup and setting up the grade feature and adding new acces rights for the menu">
+      <created>1683973605926</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1683973605926</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -97,6 +105,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="os lab idk it work dont brake it" />
-    <option name="LAST_COMMIT_MESSAGE" value="os lab idk it work dont brake it" />
+    <MESSAGE value="Cleanup and setting up the grade feature and adding new acces rights for the menu" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cleanup and setting up the grade feature and adding new acces rights for the menu" />
   </component>
 </project>
